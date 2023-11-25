@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "798634904629",
+    "project_id": "calling-room",
+    "storage_bucket": "calling-room.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:798634904629:android:22ac45bf222f5a8297b57c",
+        "android_client_info": {
+          "package_name": "com.errorxperts.callingRoom.calling_room"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDq2e81mF1NuT20ojcDvMikXkC-3-bstNM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

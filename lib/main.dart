@@ -14,8 +14,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter WebRTC',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(primarySwatch: Colors.teal),
       home: MyHomePage(),
     );
   }
@@ -30,10 +31,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   Signaling signaling = Signaling();
-  RTCVideoRenderer _localRenderer = RTCVideoRenderer();
-  RTCVideoRenderer _remoteRenderer = RTCVideoRenderer();
+  final RTCVideoRenderer _localRenderer = RTCVideoRenderer();
+  final RTCVideoRenderer _remoteRenderer = RTCVideoRenderer();
   String? roomId;
   TextEditingController textEditingController = TextEditingController(text: '');
+  bool mute = true;
 
   @override
   void initState() {
@@ -58,84 +60,110 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Welcome to Flutter Explained - WebRTC"),
+        title: const Text("Calling Room - WebRTC"),
       ),
-      body: Column(
-        children: [
-          const SizedBox(height: 8),
-          Wrap(
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  signaling.openUserMedia(_localRenderer, _remoteRenderer);
-                },
-                child: const Text("Open camera & microphone"),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: Column(
+          children: [
+            const SizedBox(height: 8),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    videoView(
+                        child: RTCVideoView(
+                      _localRenderer,
+                      mirror: true,
+                      objectFit:
+                          RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                    )),
+                    const SizedBox(height: 10),
+                    videoView(
+                        child: RTCVideoView(
+                      _remoteRenderer,
+                      objectFit:
+                          RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                    ))
+                  ],
+                ),
               ),
-              const SizedBox(
-                width: 8,
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  roomId = await signaling.createRoom(_remoteRenderer);
-                  textEditingController.text = roomId!;
-                  setState(() {});
-                },
-                child: const Text("Create room"),
-              ),
-              const SizedBox(
-                width: 8,
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // Add roomId
-                  signaling.joinRoom(
-                    textEditingController.text.trim(),
-                    _remoteRenderer,
-                  );
-                },
-                child: const Text("Join room"),
-              ),
-              const SizedBox(
-                width: 8,
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  signaling.hangUp(_localRenderer);
-                },
-                child: const Text("Hangup"),
-              )
-            ],
-          ),
-          const SizedBox(height: 8),
-          Expanded(
-            child: Padding(
+            ),
+            Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(child: RTCVideoView(_localRenderer, mirror: true)),
-                  Expanded(child: RTCVideoView(_remoteRenderer)),
+                  const Text("Join Meeting : "),
+                  Flexible(
+                    child: TextFormField(
+                      controller: textEditingController,
+                    ),
+                  )
                 ],
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            const SizedBox(height: 15),
+            Wrap(
+              spacing: 10,
               children: [
-                const Text("Join the following Room: "),
-                Flexible(
-                  child: TextFormField(
-                    controller: textEditingController,
+                ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor: mute
+                          ? MaterialStateProperty.all<Color>(Colors.grey)
+                          : MaterialStateProperty.all<Color>(Colors.teal)),
+                  onPressed: () {
+                    mute
+                        ? signaling.openUserMedia(
+                            _localRenderer, _remoteRenderer)
+                        : signaling.hangUp(_localRenderer);
+                    setState(() {
+                      mute = !mute;
+                    });
+                  },
+                  child: FittedBox(
+                    child: Row(
+                      children: [
+                        Icon(mute
+                            ? Icons.video_camera_front_outlined
+                            : Icons.video_camera_front),
+                        Icon(mute ? Icons.mic_off_outlined : Icons.mic)
+                      ],
+                    ),
                   ),
-                )
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    roomId = await signaling.createRoom(_remoteRenderer);
+                    textEditingController.text = roomId!;
+                    setState(() {});
+                  },
+                  child: const Text("Create Meeting"),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Add roomId
+                    signaling.joinRoom(
+                      textEditingController.text.trim(),
+                      _remoteRenderer,
+                    );
+                  },
+                  child: const Text("Join room"),
+                ),
               ],
             ),
-          ),
-          const SizedBox(height: 8)
-        ],
+            const SizedBox(height: 15),
+          ],
+        ),
       ),
     );
+  }
+
+  Widget videoView({required Widget child}) {
+    return Expanded(
+        child:
+            ClipRRect(borderRadius: BorderRadius.circular(20), child: child));
   }
 }

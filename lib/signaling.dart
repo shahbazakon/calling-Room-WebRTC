@@ -93,7 +93,7 @@ class Signaling {
         } else {
           showSnackBar(
               text:
-                  'Cannot set remote description. Connection state is ${peerConnection?.connectionState}');
+                  'Cannot set remote description.\nConnection state is ${peerConnection?.connectionState}');
         }
       }
     });

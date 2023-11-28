@@ -1,4 +1,5 @@
 import 'package:calling_room/signaling.dart';
+import 'package:calling_room/utils/Utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
@@ -44,8 +45,8 @@ class _DashboardState extends State<Dashboard> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Calling Room - WebRTC",
-            style: TextStyle(color: Colors.teal)),
+        title: Text("Calling Room - WebRTC",
+            style: TextStyle(color: primaryColor)),
         elevation: 0,
         backgroundColor: Colors.transparent,
         centerTitle: true,
@@ -61,7 +62,22 @@ class _DashboardState extends State<Dashboard> {
                   children: [
                     const SizedBox(height: 8),
                     Expanded(
-                      child: Padding(
+                      child: /*roomId == null || muteValue
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Welcome Calling Room",
+                                  style: TextStyle(
+                                      color: primaryColor,
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            )
+                          : */
+                          Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -117,7 +133,7 @@ class _DashboardState extends State<Dashboard> {
                                               ? MaterialStateProperty.all<
                                                   Color>(Colors.grey)
                                               : MaterialStateProperty.all<
-                                                  Color>(Colors.teal)),
+                                                  Color>(primaryColor)),
                                       onPressed: () async {
                                         muteValue
                                             ? await signalingValue

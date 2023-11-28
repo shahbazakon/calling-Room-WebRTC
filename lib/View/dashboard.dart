@@ -1,5 +1,4 @@
 import 'package:calling_room/signaling.dart';
-import 'package:calling_room/widget/custom_snackBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
@@ -157,15 +156,10 @@ class _DashboardState extends State<Dashboard> {
                               ElevatedButton(
                                 onPressed: () {
                                   // Add roomId
-                                  signaling.value
-                                      .joinRoom(
+                                  signaling.value.joinRoom(
                                     textEditingController.text.trim(),
                                     _remoteRenderer,
-                                  )
-                                      .then((value) {
-                                    showSnackBar(
-                                        title: signaling.value.toString());
-                                  });
+                                  );
                                   signaling.notifyListeners();
                                 },
                                 child: const Text("Join room"),

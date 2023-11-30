@@ -27,6 +27,7 @@ class _DashboardState extends State<Dashboard> {
 
     signaling.value.onAddRemoteStream = ((stream) {
       _remoteRenderer.srcObject = stream;
+      setState(() {});
     });
     signaling.notifyListeners();
     _localRenderer.notifyListeners();
